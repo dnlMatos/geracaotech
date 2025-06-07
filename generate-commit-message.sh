@@ -31,7 +31,7 @@ if ! git diff --cached --quiet; then
   )
 
   # Extrai o primeiro verbo da mensagem, remove pontuação e normaliza para minúsculo
-  FIRST_WORD=$(echo "$COMMIT_MESSAGE" | awk '{print tolower($1)}' | sed 's/[^a-z]*//g')
+  FIRST_WORD=$(echo "$COMMIT_MESSAGE" | grep -o -E '[a-zA-Z]+' | head -1 | tr '[:upper:]' '[:lower:]')
 
   # Normaliza variações comuns para as chaves do array
   case "$FIRST_WORD" in
@@ -45,21 +45,29 @@ if ! git diff --cached --quiet; then
     chore|chores|chored) FIRST_WORD="chore" ;;
   esac
 
-  # Verifica se existe emoji para o verbo
+  # Verifica se existe emoji para o verbo (depois do case!)
   EMOJI=${EMOJIS[$FIRST_WORD]}
 
-  # Se houver emoji, adiciona no início
+  # Remove qualquer emoji ou caractere especial do início da mensagem sugerida
+  COMMIT_MESSAGE_CLEAN=$(echo "$COMMIT_MESSAGE" | sed ':a;N;$!ba;s/^[^a-zA-Z0-9]*//;s/[[:space:]]*$//')
+
+  # Adiciona o emoji correto no início
   if [ -n "$EMOJI" ]; then
-    FINAL_MESSAGE="$EMOJI $COMMIT_MESSAGE"
+    FINAL_MESSAGE="$EMOJI $COMMIT_MESSAGE_CLEAN"
   else
-    FINAL_MESSAGE="$COMMIT_MESSAGE"
+    FINAL_MESSAGE="$COMMIT_MESSAGE_CLEAN"
   fi
 
-  echo -e "\n💬 Sugestão de commit:\n\"$FINAL_MESSAGE\"\n"
+  # Remove crases do início e fim da mensagem, se existirem
+  FINAL_MESSAGE=$(echo "$FINAL_MESSAGE" | sed 's/^`\\{3\\}//;s/`\\{3\\}$//')
+
+  echo -e "\n💬 Sugestão de commit:\n$FINAL_MESSAGE\n"
 
   # Confirmação do usuário
-  read -p "Deseja commitar com essa mensagem? (s/n) " CONFIRM
-  if [[ "$CONFIRM" == "s" ]]; then
+  printf "%s" "Deseja commitar com essa mensagem? (s/n) "
+  read CONFIRM
+  echo
+  if [[ "$CONFIRM" == "s" || "$CONFIRM" == "S" ]]; then
     git commit -m "$FINAL_MESSAGE"
     echo "✅ Commit realizado."
     # Realiza o push da branch atual
@@ -68,3 +76,6 @@ if ! git diff --cached --quiet; then
   else
     echo "🚫 Commit cancelado."
   fi
+else
+  echo "⚠️ Nenhuma mudança staged para commit."
+fi

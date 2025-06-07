@@ -1,4 +1,4 @@
 # Arquivos para ignorar no controle de versão (git)
-ccm.sh
+generate-commit-message.sh
 .cody.json
 permissao do ccm.txt
