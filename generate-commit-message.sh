@@ -70,9 +70,6 @@ if ! git diff --cached --quiet; then
   if [[ "$CONFIRM" == "s" || "$CONFIRM" == "S" ]]; then
     git commit -m "$FINAL_MESSAGE"
     echo "✅ Commit realizado."
-    # Realiza o push da branch atual
-    git push
-    echo "🚀 Push realizado."
   else
     echo "🚫 Commit cancelado."
   fi
