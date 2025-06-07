@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "suggest-commit": {
+      "description": "Sugere mensagem de commit baseada no git diff com emojis",
+      "command": "./generate-commit-message.sh"
+    }
+  }
+}

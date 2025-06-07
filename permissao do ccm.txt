@@ -1,0 +1,4 @@
+
+1. Copie e cole os arquivos .cody.json e ccm.sh para a pasta raiz do novo projeto.
+2. No terminal, execute o seguinte comando: chmod +x ccm.sh. Ele concederá permissão de execução ao arquivo ccm.sh.
+3. Execute o arquivo ccm.sh com o seguinte comando: ccm
