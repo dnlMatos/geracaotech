@@ -112,15 +112,46 @@ export const loginUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstname, surname, email, password } = req.body;
+    let { firstname, surname, email, password } = req.body;
     const user = await User.findByPk(id);
-    if (!user) {
+
+    if (!user)
       return res.status(404).json({ error: "Usuário não encontrado." });
+
+    // Verifica se o email já está em uso por outro usuário
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ where: { email } });
+      if (existingUser && existingUser.id !== user.id) {
+        return res.status(400).json({ error: "Email já cadastrado" });
+      }
     }
-    await user.update({ firstname, surname, email, password });
-    res.status(200).json(user);
+
+    // Monta objeto de atualização
+    const updateData = {
+      firstname:
+        firstname !== undefined && firstname !== ""
+          ? firstname
+          : user.firstname,
+      surname: surname !== undefined && surname !== "" ? surname : user.surname,
+      email: email !== undefined && email !== "" ? email : user.email,
+    };
+
+    if (password && password.trim() !== "") {
+      if (password.length < 6) {
+        return res
+          .status(400)
+          .json({ error: "A senha deve ter pelo menos 6 caracteres" });
+      }
+      const hashManager = new HashManager();
+      updateData.password = await hashManager.hash(password);
+    }
+
+    await user.update(updateData);
+    res.status(200).json({ ...user.get(), password: undefined });
   } catch (error) {
-    res.status(500).json({ error: "Erro ao atualizar usuário." });
+    res
+      .status(500)
+      .json({ error: error.message || "Erro ao atualizar usuário." });
   }
 };
 
