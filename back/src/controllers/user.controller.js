@@ -1,12 +1,20 @@
 import User from "../models/User.js";
+import { Authenticator } from "../services/Authenticator.js";
+import { HashManager } from "../services/HashManager.js";
 
 // Listar todos os usuários
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll();
+
+    if (users.length === 0) {
+      throw new Error("Nenhum usuário encontrado.");
+    }
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar usuários." });
+    res
+      .status(500)
+      .json({ error: error.message || "Erro ao buscar usuários." });
   }
 };
 
@@ -28,10 +36,75 @@ export const getUserById = async (req, res) => {
 export const createUser = async (req, res) => {
   try {
     const { firstname, surname, email, password } = req.body;
-    const newUser = await User.create({ firstname, surname, email, password });
-    res.status(201).json(newUser);
+
+    if (!firstname || !surname || !email || !password) {
+      throw new Error("Todos os campos são obrigatórios");
+    }
+
+    if (password.length < 6) {
+      throw new Error("A senha deve ter pelo menos 6 caracteres");
+    }
+
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      throw new Error("Usuário já cadastrado");
+    }
+
+    // Criptografa a senha usando HashManager
+    const hashManager = new HashManager();
+    const hashPassword = await hashManager.hash(password);
+
+    const newUser = await User.create({
+      firstname,
+      surname,
+      email,
+      password: hashPassword,
+    });
+
+    // Remove o campo password do objeto retornado
+    const userResponse = { ...newUser.get(), password: undefined };
+
+    // Gera o token de autenticação
+    const authenticator = new Authenticator();
+    const token = authenticator.generateToken({ id: newUser.id });
+
+    // Retorna o usuário e o token de autenticação
+    res.status(201).json({ user: userResponse, token });
   } catch (error) {
-    res.status(500).json({ error: "Erro ao criar usuário." });
+    res.status(500).json({ error: error.message || "Erro ao criar usuário." });
+  }
+};
+
+// Login de usuário
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      throw new Error("Todos os campos são obrigatórios");
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res.status(401).json({ error: "Usuário não encontrado." });
+    }
+
+    const hashManager = new HashManager();
+    const isPasswordCorrect = await hashManager.compare(
+      password,
+      user.password
+    );
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ error: "Senha inválida." });
+    }
+
+    const authenticator = new Authenticator();
+    const token = authenticator.generateToken({ id: user.id });
+
+    res.status(200).json({ token });
+  } catch (error) {
+    res.status(401).json({ error: error.message || "Erro ao fazer login." });
   }
 };
 
