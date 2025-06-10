@@ -8,7 +8,7 @@ export const getAllUsers = async (req, res) => {
     const users = await User.findAll();
 
     if (users.length === 0) {
-      return res.status(404).json({ error: "Nenhum usuário encontrado." });
+      return res.status(404).json({ message: "Nenhum usuário encontrado." });
     }
 
     // Remove o campo password de cada usuário
@@ -20,9 +20,7 @@ export const getAllUsers = async (req, res) => {
 
     res.status(200).json({ users: usersResponse });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: error.message || "Erro ao buscar usuários." });
+    res.status(500).json({ message: "Erro ao buscar usuários." });
   }
 };
 
@@ -32,7 +30,7 @@ export const getUserById = async (req, res) => {
     const { id } = req.params;
     const user = await User.findByPk(id);
     if (!user) {
-      return res.status(404).json({ error: "Usuário não encontrado." });
+      return res.status(404).json({ message: "Usuário não encontrado." });
     }
     // Remove o campo password do usuário
     const userResponse = user.get();
@@ -40,7 +38,7 @@ export const getUserById = async (req, res) => {
 
     res.status(200).json(userResponse);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar usuário." });
+    res.status(500).json({ message: "Erro ao buscar usuário." });
   }
 };
 
@@ -87,9 +85,7 @@ export const createUser = async (req, res) => {
       message: "Usuário criado com sucesso.",
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ error: error.message || "Erro ao criar usuário." });
+    return res.status(500).json({ message: "Erro ao criar usuário." });
   }
 };
 
@@ -104,7 +100,7 @@ export const loginUser = async (req, res) => {
 
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(404).json({ error: "Usuário não encontrado." });
+      return res.status(404).json({ message: "Usuário não encontrado." });
     }
 
     const hashManager = new HashManager();
@@ -114,7 +110,7 @@ export const loginUser = async (req, res) => {
     );
 
     if (!isPasswordCorrect) {
-      return res.status(401).json({ error: "Senha inválida." });
+      return res.status(401).json({ message: "Senha inválida." });
     }
 
     const authenticator = new Authenticator();
@@ -122,9 +118,7 @@ export const loginUser = async (req, res) => {
 
     return res.status(200).json({ token });
   } catch (error) {
-    return res
-      .status(401)
-      .json({ error: error.message || "Erro ao fazer login." });
+    return res.status(401).json({ message: "Erro ao fazer login." });
   }
 };
 
@@ -136,13 +130,13 @@ export const updateUser = async (req, res) => {
     const user = await User.findByPk(id);
 
     if (!user)
-      return res.status(404).json({ error: "Usuário não encontrado." });
+      return res.status(404).json({ message: "Usuário não encontrado." });
 
     // Verifica se o email já está em uso por outro usuário
     if (email && email !== user.email) {
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser && existingUser.id !== user.id) {
-        return res.status(400).json({ error: "Email já cadastrado" });
+        return res.status(400).json({ message: "Email já cadastrado" });
       }
     }
 
@@ -159,7 +153,7 @@ export const updateUser = async (req, res) => {
     if (password && password.trim() !== "") {
       if (password.length < 6) {
         return res.status(400).json({
-          error: "A senha deve ter pelo menos 6 caracteres",
+          message: "A senha deve ter pelo menos 6 caracteres",
         });
       }
       const hashManager = new HashManager();
@@ -173,9 +167,7 @@ export const updateUser = async (req, res) => {
       message: "Usuário atualizado com sucesso.",
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ error: error.message || "Erro ao atualizar usuário." });
+    return res.status(500).json({ message: "Erro ao atualizar usuário." });
   }
 };
 
@@ -185,13 +177,11 @@ export const deleteUser = async (req, res) => {
     const { id } = req.params;
     const user = await User.findByPk(id);
     if (!user) {
-      return res.status(404).json({ error: "Usuário não encontrado." });
+      return res.status(404).json({ message: "Usuário não encontrado." });
     }
     await user.destroy();
-    return res.status(204).send("Usuário deletado com sucesso.");
+    return res.status(202).send({ message: "Usuário deletado com sucesso." });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: error.message || "Erro ao deletar usuário." });
+    res.status(500).json({ message: "Erro ao deletar usuário." });
   }
 };

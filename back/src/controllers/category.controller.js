@@ -6,7 +6,7 @@ export const getAllCategories = async (req, res) => {
     const categories = await Category.findAll();
     res.status(200).json(categories);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar categorias." });
+    res.status(500).json({ message: "Erro ao buscar categorias." });
   }
 };
 
@@ -16,11 +16,11 @@ export const getCategoryById = async (req, res) => {
     const { id } = req.params;
     const category = await Category.findByPk(id);
     if (!category) {
-      return res.status(404).json({ error: "Categoria não encontrada." });
+      return res.status(404).json({ message: "Categoria não encontrada." });
     }
     res.status(200).json(category);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar categoria." });
+    res.status(500).json({ message: "Erro ao buscar categoria." });
   }
 };
 
@@ -31,7 +31,7 @@ export const createCategory = async (req, res) => {
     const newCategory = await Category.create({ name, slug, use_in_menu });
     res.status(201).json(newCategory);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao criar categoria." });
+    res.status(500).json({ message: "Erro ao criar categoria." });
   }
 };
 
@@ -43,12 +43,12 @@ export const updateCategory = async (req, res) => {
     const category = await Category.findByPk(id);
 
     if (!category) {
-      return res.status(404).json({ error: "Categoria não encontrada." });
+      return res.status(404).json({ message: "Categoria não encontrada." });
     }
     await category.update({ name, slug, use_in_menu });
     res.status(200).json(category);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao atualizar categoria." });
+    res.status(500).json({ message: "Erro ao atualizar categoria." });
   }
 };
 
@@ -58,11 +58,11 @@ export const deleteCategory = async (req, res) => {
     const { id } = req.params;
     const category = await Category.findByPk(id);
     if (!category) {
-      return res.status(404).json({ error: "Categoria não encontrada." });
+      return res.status(404).json({ message: "Categoria não encontrada." });
     }
     await category.destroy();
-    res.status(204).send();
+    res.status(202).send({ message: "Categoria deletada com sucesso." });
   } catch (error) {
-    res.status(500).json({ error: "Erro ao deletar categoria." });
+    res.status(500).json({ message: "Erro ao deletar categoria." });
   }
 };
