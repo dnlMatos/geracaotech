@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import sequelize from "../connection/connection.js";
 
 const User = sequelize.define(
@@ -31,16 +31,16 @@ const User = sequelize.define(
   {
     timestamps: true,
     underscored: true,
-    hooks: {
-      beforeCreate: async (user) => {
-        user.password = await bcrypt.hash(user.password, 10);
-      },
-      beforeUpdate: async (user) => {
-        if (user.changed("password")) {
-          user.password = await bcrypt.hash(user.password, 10);
-        }
-      },
-    },
+    // hooks: {
+    //   beforeCreate: async (user) => {
+    //     user.password = await bcrypt.hash(user.password, 10);
+    //   },
+    //   beforeUpdate: async (user) => {
+    //     if (user.changed("password")) {
+    //       user.password = await bcrypt.hash(user.password, 10);
+    //     }
+    //   },
+    // },
   }
 );
 
