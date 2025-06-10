@@ -6,7 +6,7 @@ export const getAllProducts = async (req, res) => {
     const products = await Product.findAll();
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar produtos." });
+    res.status(500).json({ message: "Erro ao buscar produtos." });
   }
 };
 
@@ -16,11 +16,11 @@ export const getProductById = async (req, res) => {
     const { id } = req.params;
     const product = await Product.findByPk(id);
     if (!product) {
-      return res.status(404).json({ error: "Produto não encontrado." });
+      return res.status(404).json({ message: "Produto não encontrado." });
     }
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar produto." });
+    res.status(500).json({ message: "Erro ao buscar produto." });
   }
 };
 
@@ -49,7 +49,7 @@ export const createProduct = async (req, res) => {
     });
     res.status(201).json(newProduct);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao criar produto." });
+    res.status(500).json({ message: "Erro ao criar produto." });
   }
 };
 
@@ -69,7 +69,7 @@ export const updateProduct = async (req, res) => {
     } = req.body;
     const product = await Product.findByPk(id);
     if (!product) {
-      return res.status(404).json({ error: "Produto não encontrado." });
+      return res.status(404).json({ message: "Produto não encontrado." });
     }
     await product.update({
       enabled,
@@ -83,7 +83,7 @@ export const updateProduct = async (req, res) => {
     });
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao atualizar produto." });
+    res.status(500).json({ message: "Erro ao atualizar produto." });
   }
 };
 
@@ -93,11 +93,11 @@ export const deleteProduct = async (req, res) => {
     const { id } = req.params;
     const product = await Product.findByPk(id);
     if (!product) {
-      return res.status(404).json({ error: "Produto não encontrado." });
+      return res.status(404).json({ message: "Produto não encontrado." });
     }
     await product.destroy();
-    res.status(204).send();
+    res.status(202).send("Produto deletado com sucesso.");
   } catch (error) {
-    res.status(500).json({ error: "Erro ao deletar produto." });
+    res.status(500).json({ message: "Erro ao deletar produto." });
   }
 };

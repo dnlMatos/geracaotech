@@ -11,6 +11,6 @@ export const productRoute = Router();
 
 productRoute.get("/", getAllProducts);
 productRoute.get("/product/:id", getProductById);
-productRoute.post("/create", createProduct);
-productRoute.put("/update/:id", updateProduct);
-productRoute.delete("/delete/:id", deleteProduct);
+productRoute.post("/product/create", createProduct);
+productRoute.put("/product/update/:id", updateProduct);
+productRoute.delete("/product/delete/:id", deleteProduct);
