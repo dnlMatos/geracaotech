@@ -109,7 +109,7 @@ export const createProduct = async (req, res) => {
       price_with_discount,
       category_ids = [],
       images = [],
-      options = [],
+      option_values = [],
     } = req.body;
 
     // Validação de campos obrigatórios
@@ -119,10 +119,8 @@ export const createProduct = async (req, res) => {
         .json({ message: "Campos obrigatórios não preenchidos." });
     }
 
-    if (category_ids.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "Pelo menos uma categoria deve ser selecionada." });
+    if (category_ids.length === 0 || typeof category_ids === "") {
+      return res.status(400).json({ message: "Categoria inválida" });
     }
 
     if (images.length === 0) {
@@ -131,7 +129,7 @@ export const createProduct = async (req, res) => {
         .json({ message: "Pelo menos uma imagem deve ser selecionada." });
     }
 
-    if (options.length === 0) {
+    if (option_values.length === 0) {
       return res
         .status(400)
         .json({ message: "Pelo menos uma opção deve ser selecionada." });
@@ -150,14 +148,19 @@ export const createProduct = async (req, res) => {
     });
 
     // Validar existência de categorias
-    const validCategory = await Category.findAll({
-      where: { id: { [Op.in]: category_ids } },
-    });
-    if (validCategory.length !== category_ids.length) {
-      return res
-        .status(400)
-        .json({ message: "Uma ou mais categorias não existem." });
+    const categoryIdsClean = (
+      Array.isArray(category_ids) ? category_ids : [category_ids]
+    )
+      .map((id) => parseInt(id, 10))
+      .filter((id) => !isNaN(id));
+
+    if (categoryIdsClean.length === 0) {
+      return res.status(400).json({ message: "IDs de categoria inválidos." });
     }
+
+    await Category.findAll({
+      where: { id: { [Op.in]: categoryIdsClean } },
+    });
 
     // Associa categorias
     if (Array.isArray(category_ids) && category_ids.length > 0) {
@@ -185,9 +188,9 @@ export const createProduct = async (req, res) => {
 
     // Cria opções
     let createdOptions = [];
-    if (Array.isArray(options) && options.length > 0) {
+    if (Array.isArray(option_values) && option_values.length > 0) {
       createdOptions = await Promise.all(
-        options.map((opt) =>
+        option_values.map((opt) =>
           ProductOption.create({
             product_id: newProduct.id,
             title: opt.title,
@@ -195,8 +198,8 @@ export const createProduct = async (req, res) => {
             radius: opt.radius,
             type: opt.type,
             values: Array.isArray(opt.values)
-              ? JSON.stringify(opt.values)
-              : opt.values,
+              ? opt.values.join(",")
+              : opt.values || "",
           })
         )
       );
@@ -216,19 +219,27 @@ export const createProduct = async (req, res) => {
         type: img.type,
         content: img.content,
       })),
-      options: createdOptions.map((opt) => ({
+      option_values: createdOptions.map((opt) => ({
         title: opt.title,
         shape: opt.shape,
         radius: opt.radius,
         type: opt.type,
-        value: opt.value,
-        values: opt.values,
+        values: typeof opt.values === "string" ? opt.values.split(",") : [],
       })),
     });
   } catch (error) {
+    if (error.name === "SequelizeUniqueConstraintError") {
+      return res
+        .status(400)
+        .json({ message: "Já existe um produto com esse slug." });
+    }
     res
       .status(500)
       .json({ message: error.message || "Erro ao criar produto." });
+
+    res
+      .status(500)
+      .json({ error: error.parent.sqlMessage || "Erro ao criar produto." });
   }
 };
 
