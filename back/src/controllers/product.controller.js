@@ -113,14 +113,17 @@ export const createProduct = async (req, res) => {
     } = req.body;
 
     // Validação de campos obrigatórios
-    if (!name || !slug || !stock || !price || !price_with_discount) {
+    if (
+      !name ||
+      !slug ||
+      !stock ||
+      !price ||
+      !price_with_discount ||
+      category_ids.length < 1
+    ) {
       return res
         .status(400)
         .json({ message: "Campos obrigatórios não preenchidos." });
-    }
-
-    if (category_ids.length === 0 || typeof category_ids === "") {
-      return res.status(400).json({ message: "Categoria inválida" });
     }
 
     if (images.length === 0) {
@@ -135,6 +138,24 @@ export const createProduct = async (req, res) => {
         .json({ message: "Pelo menos uma opção deve ser selecionada." });
     }
 
+    // Validar existência de categorias
+    const invalids_ids = category_ids.filter(
+      (id) => !Number.isInteger(id) || id <= 0
+    );
+    if (invalids_ids.length > 0)
+      return res.status(400).json({ message: "IDs de categorias inválidos." });
+    const unique_ids = [...new Set(category_ids)];
+    const existingCategories = await Category.findAll({
+      where: { id: unique_ids },
+      attributes: ["id"],
+    });
+    const existing_ids = existingCategories.map((category) => category.id);
+    const missing_ids = unique_ids.filter((id) => !existing_ids.includes(id));
+    if (missing_ids.length > 0)
+      return res
+        .status(400)
+        .json({ message: "IDs de categorias não encontrados." });
+
     // Cria o produto
     const newProduct = await Product.create({
       enabled,
@@ -145,21 +166,6 @@ export const createProduct = async (req, res) => {
       description,
       price,
       price_with_discount,
-    });
-
-    // Validar existência de categorias
-    const categoryIdsClean = (
-      Array.isArray(category_ids) ? category_ids : [category_ids]
-    )
-      .map((id) => parseInt(id, 10))
-      .filter((id) => !isNaN(id));
-
-    if (categoryIdsClean.length === 0) {
-      return res.status(400).json({ message: "IDs de categoria inválidos." });
-    }
-
-    await Category.findAll({
-      where: { id: { [Op.in]: categoryIdsClean } },
     });
 
     // Associa categorias
@@ -178,7 +184,7 @@ export const createProduct = async (req, res) => {
         images.map((img) =>
           ProductImage.create({
             product_id: newProduct.id,
-            type: img.type,
+            // type: img.type,
             content: img.content,
             path: img.path, // se o campo existir no model
           })
@@ -197,7 +203,7 @@ export const createProduct = async (req, res) => {
             shape: opt.shape,
             radius: opt.radius,
             type: opt.type,
-            values: Array.isArray(opt.values)
+            option_values: Array.isArray(opt.values)
               ? opt.values.join(",")
               : opt.values || "",
           })
@@ -206,27 +212,9 @@ export const createProduct = async (req, res) => {
     }
 
     // Response espelhando o request
-    res.status(201).json({
-      enabled: newProduct.enabled,
-      name: newProduct.name,
-      slug: newProduct.slug,
-      stock: newProduct.stock,
-      description: newProduct.description,
-      price: newProduct.price,
-      price_with_discount: newProduct.price_with_discount,
-      category_ids: Array.isArray(category_ids) ? category_ids : [],
-      images: createdImages.map((img) => ({
-        type: img.type,
-        content: img.content,
-      })),
-      option_values: createdOptions.map((opt) => ({
-        title: opt.title,
-        shape: opt.shape,
-        radius: opt.radius,
-        type: opt.type,
-        values: typeof opt.values === "string" ? opt.values.split(",") : [],
-      })),
-    });
+    res
+      .status(201)
+      .json({ data: newProduct, message: "Produto criado com sucesso" });
   } catch (error) {
     if (error.name === "SequelizeUniqueConstraintError") {
       return res
