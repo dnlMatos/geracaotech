@@ -33,10 +33,9 @@ const ProductOption = sequelize.define(
       type: DataTypes.ENUM("text", "color"),
       defaultValue: "text",
     },
-    values: {
+    option_values: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: "values_ProductOption",
     },
   },
   {

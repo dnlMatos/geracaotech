@@ -24,6 +24,10 @@ const ProductImage = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
   },
   {
     timestamps: false,
