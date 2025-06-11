@@ -1,5 +1,8 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../connection/connection.js";
+import ProductImage from "./ProductImage.js";
+import ProductOption from "./ProductOption.js";
+import ProductCategory from "./ProductCategory.js";
 
 const Product = sequelize.define(
   "Product",
@@ -47,5 +50,18 @@ const Product = sequelize.define(
     underscored: true,
   }
 );
+
+// Associações
+Product.hasMany(ProductImage, { as: "images", foreignKey: "product_id" });
+ProductImage.belongsTo(Product, { foreignKey: "product_id" });
+
+Product.hasMany(ProductOption, { as: "options", foreignKey: "product_id" });
+ProductOption.belongsTo(Product, { foreignKey: "product_id" });
+
+Product.hasMany(ProductCategory, {
+  as: "categories",
+  foreignKey: "product_id",
+});
+ProductCategory.belongsTo(Product, { foreignKey: "product_id" });
 
 export default Product;

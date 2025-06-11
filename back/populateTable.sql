@@ -1,139 +1,223 @@
-USE bd_geracaotech;
+-- Requisito 01 - Tabela de usuários
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    firstname VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
--- Usuários
-INSERT INTO Users (firstname, surname, email, password, created_at, updated_at) VALUES
-('João', 'Silva', 'joao1@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Maria', 'Oliveira', 'maria2@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Carlos', 'Santos', 'carlos3@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Ana', 'Souza', 'ana4@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Pedro', 'Lima', 'pedro5@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Julia', 'Costa', 'julia6@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Lucas', 'Ferreira', 'lucas7@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Fernanda', 'Almeida', 'fernanda8@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Rafael', 'Gomes', 'rafael9@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Patricia', 'Martins', 'patricia10@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Bruno', 'Barros', 'bruno11@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Camila', 'Ribeiro', 'camila12@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Felipe', 'Moura', 'felipe13@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Larissa', 'Pereira', 'larissa14@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Gabriel', 'Rodrigues', 'gabriel15@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Aline', 'Carvalho', 'aline16@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Thiago', 'Teixeira', 'thiago17@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Beatriz', 'Rocha', 'beatriz18@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Vinicius', 'Mendes', 'vinicius19@email.com', '<hash_bcrypt>', NOW(), NOW()),
-('Paula', 'Vieira', 'paula20@email.com', '<hash_bcrypt>', NOW(), NOW());
+-- Requisito 02 - Tabela de categorias
+CREATE TABLE categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    use_in_menu BOOLEAN DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
--- Categorias
-INSERT INTO Categories (name, slug, use_in_menu, created_at, updated_at) VALUES
-('Eletrônicos', 'eletronicos', 1, NOW(), NOW()),
-('Roupas', 'roupas', 0, NOW(), NOW()),
-('Livros', 'livros', 1, NOW(), NOW()),
-('Esportes', 'esportes', 0, NOW(), NOW()),
-('Beleza', 'beleza', 1, NOW(), NOW()),
-('Brinquedos', 'brinquedos', 0, NOW(), NOW()),
-('Móveis', 'moveis', 1, NOW(), NOW()),
-('Automotivo', 'automotivo', 0, NOW(), NOW()),
-('Informática', 'informatica', 1, NOW(), NOW()),
-('Games', 'games', 0, NOW(), NOW()),
-('Petshop', 'petshop', 1, NOW(), NOW()),
-('Joias', 'joias', 0, NOW(), NOW()),
-('Ferramentas', 'ferramentas', 1, NOW(), NOW()),
-('Alimentos', 'alimentos', 0, NOW(), NOW()),
-('Bebidas', 'bebidas', 1, NOW(), NOW()),
-('Calçados', 'calcados', 0, NOW(), NOW()),
-('Viagem', 'viagem', 1, NOW(), NOW()),
-('Saúde', 'saude', 0, NOW(), NOW()),
-('Casa', 'casa', 1, NOW(), NOW()),
-('Música', 'musica', 0, NOW(), NOW());
+-- Requisito 03 - Tabela de produtos
+CREATE TABLE products (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    enabled BOOLEAN DEFAULT 0,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    use_in_menu BOOLEAN DEFAULT 0,
+    stock INT DEFAULT 0,
+    description TEXT,
+    price FLOAT NOT NULL,
+    price_with_discount FLOAT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
--- Produtos
-INSERT INTO Products (enabled, name, slug, use_in_menu, stock, description, price, price_with_discount, created_at, updated_at) VALUES
-(1, 'Smartphone', 'smartphone', 1, 50, 'Celular de última geração', 2000.00, 1800.00, NOW(), NOW()),
-(1, 'Camiseta', 'camiseta', 0, 100, 'Camiseta 100% algodão', 50.00, 40.00, NOW(), NOW()),
-(1, 'Notebook', 'notebook', 1, 30, 'Notebook rápido', 3500.00, 3200.00, NOW(), NOW()),
-(1, 'Tênis', 'tenis', 0, 80, 'Tênis esportivo', 200.00, 150.00, NOW(), NOW()),
-(1, 'Livro', 'livro', 1, 200, 'Livro de aventura', 40.00, 30.00, NOW(), NOW()),
-(1, 'Bicicleta', 'bicicleta', 0, 10, 'Bicicleta de alumínio', 1200.00, 1100.00, NOW(), NOW()),
-(1, 'Perfume', 'perfume', 1, 60, 'Perfume importado', 300.00, 250.00, NOW(), NOW()),
-(1, 'Boneca', 'boneca', 0, 90, 'Boneca de pano', 80.00, 60.00, NOW(), NOW()),
-(1, 'Cadeira', 'cadeira', 1, 40, 'Cadeira ergonômica', 400.00, 350.00, NOW(), NOW()),
-(1, 'Volante', 'volante', 0, 25, 'Volante esportivo', 500.00, 450.00, NOW(), NOW()),
-(1, 'Mouse', 'mouse', 1, 70, 'Mouse gamer', 150.00, 120.00, NOW(), NOW()),
-(1, 'Console', 'console', 0, 15, 'Console de videogame', 2500.00, 2300.00, NOW(), NOW()),
-(1, 'Ração', 'racao', 1, 100, 'Ração para cães', 90.00, 80.00, NOW(), NOW()),
-(1, 'Anel', 'anel', 0, 20, 'Anel de ouro', 800.00, 700.00, NOW(), NOW()),
-(1, 'Martelo', 'martelo', 1, 60, 'Martelo de aço', 60.00, 50.00, NOW(), NOW()),
-(1, 'Chocolate', 'chocolate', 0, 200, 'Chocolate ao leite', 10.00, 8.00, NOW(), NOW()),
-(1, 'Vinho', 'vinho', 1, 30, 'Vinho tinto', 100.00, 90.00, NOW(), NOW()),
-(1, 'Bota', 'bota', 0, 50, 'Bota de couro', 250.00, 200.00, NOW(), NOW()),
-(1, 'Mala', 'mala', 1, 20, 'Mala de viagem', 300.00, 250.00, NOW(), NOW()),
-(1, 'Violão', 'violao', 0, 10, 'Violão acústico', 600.00, 550.00, NOW(), NOW());
+-- Requisito 04 - Tabela de imagens do produto
+CREATE TABLE product_images (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT NOT NULL,
+    -- VER NECESSIDADE
+    content LONGTEXT,
+    enabled BOOLEAN DEFAULT 0,
+    path VARCHAR(500) NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    INDEX idx_product_id (product_id)
+);
 
--- Imagens de Produto
-INSERT INTO Product_images (product_id, enabled, path) VALUES
-(1, 1, 'images/smartphone1.jpg'),
-(2, 1, 'images/camiseta1.jpg'),
-(3, 1, 'images/notebook1.jpg'),
-(4, 1, 'images/tenis1.jpg'),
-(5, 1, 'images/livro1.jpg'),
-(6, 1, 'images/bicicleta1.jpg'),
-(7, 1, 'images/perfume1.jpg'),
-(8, 1, 'images/boneca1.jpg'),
-(9, 1, 'images/cadeira1.jpg'),
-(10, 1, 'images/volante1.jpg'),
-(11, 1, 'images/mouse1.jpg'),
-(12, 1, 'images/console1.jpg'),
-(13, 1, 'images/racao1.jpg'),
-(14, 1, 'images/anel1.jpg'),
-(15, 1, 'images/martelo1.jpg'),
-(16, 1, 'images/chocolate1.jpg'),
-(17, 1, 'images/vinho1.jpg'),
-(18, 1, 'images/bota1.jpg'),
-(19, 1, 'images/mala1.jpg'),
-(20, 1, 'images/violao1.jpg');
+-- Requisito 05 - Tabela de opções do produto
+CREATE TABLE product_options (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    shape ENUM('square', 'circle') DEFAULT 'square',
+    radius INT DEFAULT 0,
+    type ENUM('text', 'color') DEFAULT 'text',
+    option_values TEXT NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    INDEX idx_product_id (product_id)
+);
 
--- Opções de Produto
-INSERT INTO Product_options (product_id, title, shape, radius, type, values_ProductOption) VALUES
-(1, 'Cor', 'circle', 0, 'color', 'preto,branco,azul'),
-(2, 'Tamanho', 'square', 0, 'text', 'P,M,G,GG'),
-(3, 'Memória', 'square', 0, 'text', '8GB,16GB,32GB'),
-(4, 'Numeração', 'square', 0, 'text', '37,38,39,40,41'),
-(5, 'Idioma', 'square', 0, 'text', 'português,inglês,espanhol'),
-(6, 'Quadro', 'square', 0, 'text', '15,17,19'),
-(7, 'Volume', 'square', 0, 'text', '50ml,100ml,150ml'),
-(8, 'Cor', 'circle', 0, 'color', 'rosa,amarelo,azul'),
-(9, 'Material', 'square', 0, 'text', 'plástico,metal,alumínio'),
-(10, 'Modelo', 'square', 0, 'text', 'esportivo,clássico'),
-(11, 'DPI', 'square', 0, 'text', '800,1600,3200'),
-(12, 'Armazenamento', 'square', 0, 'text', '500GB,1TB,2TB'),
-(13, 'Peso', 'square', 0, 'text', '1kg,2kg,5kg'),
-(14, 'Tamanho', 'square', 0, 'text', 'P,M,G'),
-(15, 'Tipo', 'square', 0, 'text', 'claw,ballpeen,sledge'),
-(16, 'Sabor', 'square', 0, 'text', 'ao leite,amargo,branco'),
-(17, 'Safra', 'square', 0, 'text', '2018,2019,2020'),
-(18, 'Tamanho', 'square', 0, 'text', '36,37,38,39,40'),
-(19, 'Capacidade', 'square', 0, 'text', '20L,40L,60L'),
-(20, 'Cordas', 'square', 0, 'text', 'nylon,aço');
+-- Requisito 06 - Tabela de produtos e categoria (relacionamento many-to-many)
+-- Dropar a tabela atual se existir
+DROP TABLE IF EXISTS product_category;
+DROP TABLE IF EXISTS product_categories;
 
--- Associação Produto-Categoria
-INSERT INTO Product_categories (product_id, category_id) VALUES
-(1, 1),
-(2, 2),
-(3, 9),
-(4, 16),
-(5, 3),
-(6, 4),
-(7, 5),
-(8, 6),
-(9, 7),
-(10, 8),
-(11, 9),
-(12, 10),
-(13, 11),
-(14, 12),
-(15, 13),
-(16, 14),
-(17, 15),
-(18, 16),
-(19, 17),
-(20, 20);
+-- Criar a tabela com o nome correto (plural)
+CREATE TABLE product_categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT NOT NULL,
+    category_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_product_category (product_id, category_id),
+    INDEX idx_product_id (product_id),
+    INDEX idx_category_id (category_id)
+);
+
+
+-- Inserir usuários de exemplo (senhas hasheadas com bcrypt)
+INSERT INTO users (firstname, surname, email, password) VALUES
+('João', 'Silva', 'joao.silva@email.com', '$2b$10$N9qo8uLOickgx2ZMRZoMye.IjPeGvGzjYwjUxMI7.NU7VYnCJSdTu'), -- senha: 123456
+('Maria', 'Santos', 'maria.santos@email.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'), -- senha: password
+('Pedro', 'Oliveira', 'pedro.oliveira@email.com', '$2b$10$N9qo8uLOickgx2ZMRZoMye.IjPeGvGzjYwjUxMI7.NU7VYnCJSdTu'), -- senha: 123456
+('Ana', 'Costa', 'ana.costa@email.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'); -- senha: password
+
+-- Inserir categorias de exemplo
+INSERT INTO categories (name, slug, use_in_menu) VALUES
+('Roupas Masculinas', 'roupas-masculinas', 1),
+('Roupas Femininas', 'roupas-femininas', 1),
+('Camisetas', 'camisetas', 1),
+('Calças', 'calcas', 1),
+('Acessórios', 'acessorios', 0),
+('Sapatos', 'sapatos', 1),
+('Bolsas', 'bolsas', 0);
+
+-- Inserir produtos de exemplo
+INSERT INTO products (enabled, name, slug, use_in_menu, stock, description, price, price_with_discount) VALUES
+(1, 'Camiseta Básica Masculina', 'camiseta-basica-masculina', 1, 50, 'Camiseta básica 100% algodão, confortável e versátil', 49.90, 39.90),
+(1, 'Calça Jeans Feminina', 'calca-jeans-feminina', 1, 30, 'Calça jeans skinny com elastano, modelagem perfeita', 129.90, 99.90),
+(1, 'Tênis Esportivo', 'tenis-esportivo', 1, 25, 'Tênis para corrida e caminhada, muito confortável', 199.90, 179.90),
+(0, 'Bolsa de Couro', 'bolsa-de-couro', 0, 15, 'Bolsa de couro legítimo, elegante e durável', 299.90, 249.90),
+(1, 'Camiseta Estampada', 'camiseta-estampada', 1, 40, 'Camiseta com estampa exclusiva, 100% algodão', 59.90, 49.90);
+
+-- Inserir imagens dos produtos
+-- Inserir imagens dos produtos (refatorado)
+INSERT INTO product_images (product_id, enabled, path) VALUES
+-- Produto 1: Camiseta Básica Masculina
+(1, 1, '/images/products/camiseta-basica-masculina-frente.jpg'),
+(1, 1, '/images/products/camiseta-basica-masculina-costas.jpg'),
+(1, 1, '/images/products/camiseta-basica-masculina-detalhe.jpg'),
+(1, 0, '/images/products/camiseta-basica-masculina-modelo.jpg'), -- desabilitada
+
+-- Produto 2: Calça Jeans Feminina  
+(2, 1, '/images/products/calca-jeans-feminina-frente.jpg'),
+(2, 1, '/images/products/calca-jeans-feminina-costas.jpg'),
+(2, 1, '/images/products/calca-jeans-feminina-lateral.jpg'),
+(2, 0, '/images/products/calca-jeans-feminina-detalhe-bolso.jpg'), -- desabilitada
+
+-- Produto 3: Tênis Esportivo
+(3, 1, '/images/products/tenis-esportivo-lateral.jpg'),
+(3, 1, '/images/products/tenis-esportivo-superior.jpg'),
+(3, 1, '/images/products/tenis-esportivo-sola.jpg'),
+(3, 1, '/images/products/tenis-esportivo-par.jpg'),
+
+-- Produto 4: Bolsa de Couro
+(4, 1, '/images/products/bolsa-couro-frente.jpg'),
+(4, 1, '/images/products/bolsa-couro-interior.jpg'),
+(4, 0, '/images/products/bolsa-couro-modelo.jpg'), -- desabilitada
+
+-- Produto 5: Camiseta Estampada
+(5, 1, '/images/products/camiseta-estampada-frente.jpg'),
+(5, 1, '/images/products/camiseta-estampada-costas.jpg'),
+(5, 1, '/images/products/camiseta-estampada-detalhe-estampa.jpg');
+
+
+-- Inserir opções dos produtos
+INSERT INTO product_options (product_id, title, shape, radius, type, option_values) VALUES
+-- Camiseta Básica Masculina
+(1, 'Tamanho', 'square', 4, 'text', 'PP,P,M,G,GG'),
+(1, 'Cor', 'circle', 8, 'color', '#FFFFFF,#000000,#FF0000,#0000FF'),
+-- Calça Jeans Feminina
+(2, 'Tamanho', 'square', 4, 'text', '36,38,40,42,44'),
+(2, 'Cor', 'circle', 6, 'color', '#000080,#4169E1,#000000'),
+-- Tênis Esportivo
+(3, 'Tamanho', 'square', 4, 'text', '35,36,37,38,39,40,41,42,43,44'),
+(3, 'Cor', 'circle', 8, 'color', '#FFFFFF,#000000,#FF0000'),
+-- Bolsa de Couro
+(4, 'Cor', 'circle', 8, 'color', '#8B4513,#000000,#A0522D'),
+-- Camiseta Estampada
+(5, 'Tamanho', 'square', 4, 'text', 'P,M,G,GG'),
+(5, 'Estampa', 'square', 6, 'text', 'Floral,Geométrica,Abstrata');
+
+-- Relacionar produtos com categorias
+-- Inserir categorias
+-- Inserir relacionamentos produto-categoria
+INSERT INTO product_categories (product_id, category_id) VALUES
+-- Camiseta Básica Masculina (produto 1)
+(1, 1), -- Roupas Masculinas
+(1, 3), -- Camisetas
+-- Calça Jeans Feminina (produto 2)
+(2, 2), -- Roupas Femininas
+(2, 4), -- Calças
+-- Tênis Esportivo (produto 3)
+(3, 1), -- Roupas Masculinas
+(3, 2), -- Roupas Femininas
+(3, 6), -- Sapatos
+(3, 8), -- Esportes
+-- Bolsa de Couro (produto 4)
+(4, 2), -- Roupas Femininas
+(4, 5), -- Acessórios
+(4, 7), -- Bolsas
+-- Camiseta Estampada (produto 5)
+(5, 1), -- Roupas Masculinas
+(5, 2), -- Roupas Femininas
+(5, 3); -- Camisetas
+
+
+-- Consultas úteis para verificar os dados inseridos
+
+-- Buscar todos os usuários
+SELECT id, firstname, surname, email, created_at FROM users;
+
+-- Buscar categorias ativas no menu
+SELECT * FROM categories WHERE use_in_menu = 1;
+
+-- Buscar produtos habilitados com suas categorias
+SELECT 
+    p.id,
+    p.name,
+    p.slug,
+    p.price,
+    p.price_with_discount,
+    p.stock,
+    GROUP_CONCAT(c.name) as categories
+FROM products p
+LEFT JOIN product_category pc ON p.id = pc.product_id
+LEFT JOIN categories c ON pc.category_id = c.id
+WHERE p.enabled = 1
+GROUP BY p.id;
+
+-- Buscar produto completo com imagens e opções
+SELECT 
+    p.*,
+    pi.path as image_path,
+    po.title as option_title,
+    po.type as option_type,
+    po.values as option_values
+FROM products p
+LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.enabled = 1
+LEFT JOIN product_options po ON p.id = po.product_id
+WHERE p.slug = 'camiseta-basica-masculina';
+
+-- Contar produtos por categoria
+SELECT 
+    c.name as category_name,
+    COUNT(pc.product_id) as product_count
+FROM categories c
+LEFT JOIN product_category pc ON c.id = pc.category_id
+LEFT JOIN products p ON pc.product_id = p.id AND p.enabled = 1
+GROUP BY c.id, c.name
+ORDER BY product_count DESC;
