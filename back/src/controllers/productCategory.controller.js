@@ -39,34 +39,37 @@ export const getProductCategoryById = async (req, res) => {
 };
 
 // Criar novo relacionamento produto-categoria
-export const createProductCategory = async (req, res) => {
+export const createProductCategory = async (product_id, category_ids) => {
+  // const { product_id, category_ids } = req.body;
+  console.log(product_id, category_ids);
+
   try {
-    const { product_id, category_id } = req.body;
-    if (!product_id || !category_id) {
-      return res
-        .status(400)
-        .json({ message: "Produto e/ou categoria não fornecidos." });
-    }
-
-    // Verifica se o relacionamento já existe
-    const existingRelation = await ProductCategory.findOne({
-      where: { product_id, category_id },
-    });
-
-    if (existingRelation) {
-      return res.status(409).json({ message: "Relacionamento já existe." });
-    }
-
-    const newProductCategory = await ProductCategory.create({
-      product_id,
-      category_id,
-    });
-    res.status(201).json({
-      ProductCategory: newProductCategory,
-      message: "Relacionamento criado com sucesso",
+    if (!product_id || !Array.isArray(category_ids) || category_ids.length < 1)
+      console.log("Produto e/ou categoria não fornecidos.");
+    // // Verifica se o relacionamento já existe
+    // const existingRelation = await ProductCategory.findOne({
+    //   where: {
+    //     product_id,
+    //     category_id: {
+    //       [Op.in]: category_ids,
+    //     },
+    //   },
+    // });
+    // if (existingRelation) {
+    //   return res.status(409).json({ message: "Relacionamento já existe." });
+    // }
+    // // Cria os relacionamentos (um para cada categoria)
+    // const newProductCategories = await Promise.all(
+    //   category_ids.map((category_id) =>
+    //     ProductCategory.create({ product_id, category_id })
+    //   )
+    // );
+    throw new Error({
+      // ProductCategory: newProductCategories,
+      message: "Relacionamento(s) criado(s) com sucesso",
     });
   } catch (error) {
-    res.status(500).json({ message: "Erro ao criar relacionamento." });
+    throw new Error({ message: "Erro ao criar relacionamento." });
   }
 };
 

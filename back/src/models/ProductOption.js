@@ -34,7 +34,7 @@ const ProductOption = sequelize.define(
       defaultValue: "text",
     },
     option_values: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
   },
