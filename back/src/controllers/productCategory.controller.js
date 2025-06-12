@@ -1,4 +1,5 @@
 import ProductCategory from "../models/ProductCategory.js";
+import { Op } from "sequelize";
 
 // Listar todos os relacionamentos produto-categoria
 export const getAllProductCategories = async (req, res) => {
@@ -40,36 +41,39 @@ export const getProductCategoryById = async (req, res) => {
 
 // Criar novo relacionamento produto-categoria
 export const createProductCategory = async (product_id, category_ids) => {
-  // const { product_id, category_ids } = req.body;
-  console.log(product_id, category_ids);
-
   try {
     if (!product_id || !Array.isArray(category_ids) || category_ids.length < 1)
-      console.log("Produto e/ou categoria não fornecidos.");
+      throw new Error("Produto e/ou categoria não fornecidos.");
+
     // // Verifica se o relacionamento já existe
-    // const existingRelation = await ProductCategory.findOne({
-    //   where: {
-    //     product_id,
-    //     category_id: {
-    //       [Op.in]: category_ids,
-    //     },
-    //   },
-    // });
-    // if (existingRelation) {
-    //   return res.status(409).json({ message: "Relacionamento já existe." });
-    // }
-    // // Cria os relacionamentos (um para cada categoria)
-    // const newProductCategories = await Promise.all(
-    //   category_ids.map((category_id) =>
-    //     ProductCategory.create({ product_id, category_id })
-    //   )
-    // );
-    throw new Error({
-      // ProductCategory: newProductCategories,
-      message: "Relacionamento(s) criado(s) com sucesso",
+    const existingRelation = await ProductCategory.findOne({
+      where: {
+        product_id,
+        category_id: {
+          [Op.in]: category_ids,
+        },
+      },
     });
+    if (existingRelation) {
+      return res.status(409).json({ message: "Relacionamento já existe." });
+    }
+
+    // Cria os relacionamentos (um para cada categoria)
+    const created = await Promise.all(
+      category_ids.map((el) =>
+        ProductCategory.create({
+          product_id,
+          category_id: el,
+        })
+      )
+    );
+
+    return {
+      categories: created,
+      message: "Relacionamento(s) criado(s) com sucesso",
+    };
   } catch (error) {
-    throw new Error({ message: "Erro ao criar relacionamento." });
+    throw new Error(error.message || "Erro ao criar relacionamento.");
   }
 };
 

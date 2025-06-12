@@ -14,6 +14,8 @@ import {
 } from "../utils/utilities.js";
 import Category from "../models/Category.js";
 import { createProductCategory } from "./productCategory.controller.js";
+import { createProductImage } from "./productImage.controller.js";
+import { createProductOptions } from "./productOptions.controller.js";
 
 export const getAllProducts = async (req, res) => {
   try {
@@ -107,20 +109,23 @@ export const createProduct = async (req, res) => {
         .json({ message: "Campos obrigatórios não preenchidos." });
     }
 
-    if (!Array.isArray(category_ids) || category_ids.length === 0) {
-      return res.status(400).json({ message: "Categorias são obrigatórias." });
-    }
-
-    if (!Array.isArray(images || images[0])) {
+    // 🔎 Validação de imagens
+    if (!Array.isArray(images || images.length === 0)) {
       return res
         .status(400)
         .json({ message: "Pelo menos uma imagem deve ser enviada." });
     }
 
+    // 🔎 Validação de opções
     if (!Array.isArray(option_values) || option_values.length === 0) {
       return res
         .status(400)
         .json({ message: "Pelo menos uma opção deve ser selecionada." });
+    }
+
+    // 🔎 Validação de categorias
+    if (!Array.isArray(category_ids) || category_ids.length === 0) {
+      return res.status(400).json({ message: "Categorias são obrigatórias." });
     }
 
     // 🔎 Validação de categorias existentes
@@ -148,27 +153,42 @@ export const createProduct = async (req, res) => {
     }
 
     // 💾 Criação do produto
-    // const data = await Product.create({
-    //   enabled,
-    //   name,
-    //   slug,
-    //   use_in_menu,
-    //   stock,
-    //   description,
-    //   price,
-    //   price_with_discount,
-    // });
+    const newProduct = await Product.create({
+      enabled,
+      name,
+      slug,
+      use_in_menu,
+      stock,
+      description,
+      price,
+      price_with_discount,
+    });
 
-    // const product_id = data.get();
+    const productId = newProduct.id;
 
-    const dt = createProductCategory(1, []);
-    // console.log(tempIdData);
+    // 🔁 Criação de categorias
+    const productCategory = await createProductCategory(
+      productId,
+      category_ids
+    );
 
-    console.log(dt);
+    // 🔁 Criação de imagens
+    const productImage = await createProductImage({
+      product_id: productId,
+      enabled,
+      images,
+    });
+
+    // 🔁 Criação de opções
+    const productOption = await createProductOptions({
+      product_id: productId,
+      option_values,
+    });
+
     // 🔁 Retorno estruturado
     return res.status(201).json({
       message: "Produto criado com sucesso",
-      data: product_id,
+      data: { ...productCategory, productImage, productOption },
     });
   } catch (error) {
     if (error.name === "SequelizeUniqueConstraintError") {
