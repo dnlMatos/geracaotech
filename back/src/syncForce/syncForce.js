@@ -1,9 +1,9 @@
 import connection from "../connection/connection.js";
-import Category from "../models/Category.js";
-import Product from "../models/Product.js";
-import ProductCategory from "../models/ProductCategory.js";
-import ProductImage from "../models/ProductImage.js";
-import ProductOption from "../models/ProductOption.js";
-import User from "../models/User.js";
+import "../models/User.js";
+import "../models/Category.js";
+import "../models/Product.js";
+import "../models/ProductCategory.js";
+import "../models/ProductImage.js";
+import "../models/ProductOption.js";
 
 connection.sync({ force: true });

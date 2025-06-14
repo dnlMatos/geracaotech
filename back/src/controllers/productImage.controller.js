@@ -21,7 +21,7 @@ export const createProductImage = async ({ product_id, enabled, images }) => {
 
     return {
       images: created,
-      message: "Imagens do produto salva com sucesso",
+      // message: "Imagens do produto salva com sucesso",
     };
   } catch (error) {
     throw new Error(error.message || "Erro ao criar imagem.");

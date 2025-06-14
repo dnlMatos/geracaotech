@@ -21,7 +21,7 @@ export const createProductOptions = async ({ product_id, option_values }) => {
 
     return {
       options: created,
-      message: "Opções do produto salvas com sucesso",
+      // message: "Opções do produto salvas com sucesso",
     };
   } catch (error) {
     throw new Error(error.message || "Erro ao criar opções do produto.");

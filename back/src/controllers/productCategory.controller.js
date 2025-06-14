@@ -1,5 +1,5 @@
 import ProductCategory from "../models/ProductCategory.js";
-import { Op } from "sequelize";
+import { Op, where } from "sequelize";
 
 // Listar todos os relacionamentos produto-categoria
 export const getAllProductCategories = async (req, res) => {
@@ -24,16 +24,14 @@ export const getAllProductCategories = async (req, res) => {
 // Buscar relacionamento por ID
 export const getProductCategoryById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const productCategory = await ProductCategory.findByPk(id);
-
-    if (!productCategory) {
-      return res
-        .status(404)
-        .json({ message: "Relacionamento não encontrado." });
-    }
-
-    res.status(200).json(productCategory);
+    // const { id } = req.params;
+    // const productCategory = await ProductCategory.findByPk(id);
+    // if (!productCategory) {
+    //   return res
+    //     .status(404)
+    //     .json({ message: "Relacionamento não encontrado." });
+    // }
+    // res.status(200).json(productCategory);
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar relacionamento." });
   }
@@ -42,35 +40,43 @@ export const getProductCategoryById = async (req, res) => {
 // Criar novo relacionamento produto-categoria
 export const createProductCategory = async (product_id, category_ids) => {
   try {
-    if (!product_id || !Array.isArray(category_ids) || category_ids.length < 1)
-      throw new Error("Produto e/ou categoria não fornecidos.");
-
-    // // Verifica se o relacionamento já existe
-    const existingRelation = await ProductCategory.findOne({
+    // Busca relacionamentos já existentes
+    const existingRelations = await ProductCategory.findAll({
       where: {
-        product_id,
+        product_id: product_id,
         category_id: {
           [Op.in]: category_ids,
         },
       },
+      attributes: ["category_id"],
     });
-    if (existingRelation) {
-      return res.status(409).json({ message: "Relacionamento já existe." });
+
+    const existingCategoryIds = existingRelations.map((rel) => rel.category_id);
+
+    const categoriesToInsert = category_ids.filter(
+      (id) => !existingCategoryIds.includes(id)
+    );
+
+    if (categoriesToInsert.length === 0) {
+      throw new Error("Todos os relacionamentos já existem.");
     }
 
+    // if (existingRelations > 0)
+    //   return { message: "Um ou mais relacionamento(s) já existe(m)" };
+
     // Cria os relacionamentos (um para cada categoria)
-    const created = await Promise.all(
-      category_ids.map((el) =>
+    const createdRelations = await Promise.all(
+      category_ids.map((categoryId) =>
         ProductCategory.create({
-          product_id,
-          category_id: el,
+          product_id: product_id,
+          category_id: categoryId,
         })
       )
     );
 
     return {
-      categories: created,
-      message: "Relacionamento(s) criado(s) com sucesso",
+      // categories: createdRelations,
+      // message: "Relacionamento(s) criado(s) com sucesso",
     };
   } catch (error) {
     throw new Error(error.message || "Erro ao criar relacionamento.");

@@ -1,8 +1,9 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import sequelize from "../connection/connection.js";
 
-const Category = sequelize.define(
-  "Category",
+class Category extends Model {}
+
+Category.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -25,6 +26,7 @@ const Category = sequelize.define(
   {
     timestamps: true,
     underscored: true,
+    sequelize: sequelize,
   }
 );
 
