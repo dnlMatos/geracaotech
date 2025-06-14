@@ -1,24 +1,15 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import sequelize from "../connection/connection.js";
-import ProductImage from "./ProductImage.js";
-import ProductOption from "./ProductOption.js";
-import ProductCategory from "./ProductCategory.js";
-import Category from "./Category.js";
 
-const Product = sequelize.define(
-  "Product",
+class Product extends Model {}
+
+Product.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    image: [
-      {
-        type: String,
-        default: [],
-      },
-    ],
     enabled: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -52,36 +43,12 @@ const Product = sequelize.define(
       allowNull: false,
     },
   },
+
   {
     timestamps: true,
     underscored: true,
+    sequelize: sequelize,
   }
 );
-
-// Associações
-Product.hasMany(ProductImage, { as: "images", foreignKey: "product_id" });
-ProductImage.belongsTo(Product, { foreignKey: "product_id" });
-
-Product.hasMany(ProductOption, { as: "options", foreignKey: "product_id" });
-ProductOption.belongsTo(Product, { foreignKey: "product_id" });
-
-// Associação muitos-para-muitos correta:
-Product.belongsToMany(Category, {
-  through: ProductCategory,
-  as: "categories",
-  foreignKey: "product_id",
-});
-Category.belongsToMany(Product, {
-  through: ProductCategory,
-  as: "products",
-  foreignKey: "category_id",
-});
-
-// Se precisar da relação direta com ProductCategory:
-Product.hasMany(ProductCategory, {
-  as: "productCategories", // alias diferente!
-  foreignKey: "product_id",
-});
-ProductCategory.belongsTo(Product, { foreignKey: "product_id" });
 
 export default Product;

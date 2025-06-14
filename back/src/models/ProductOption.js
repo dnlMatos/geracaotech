@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import sequelize from "../connection/connection.js";
 
 const ProductOption = sequelize.define(
-  "ProductOption",
+  "product_options",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -13,7 +13,7 @@ const ProductOption = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Products",
+        model: "products",
         key: "id",
       },
     },

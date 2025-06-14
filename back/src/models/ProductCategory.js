@@ -1,14 +1,17 @@
 import sequelize from "../connection/connection.js";
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
+import Product from "./Product.js";
+import Category from "./Category.js";
 
-const ProductCategory = sequelize.define(
-  "ProductCategory",
+class ProductCategory extends Model {}
+
+ProductCategory.init(
   {
     product_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Products",
+        model: Product,
         key: "id",
       },
     },
@@ -16,7 +19,7 @@ const ProductCategory = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Categories",
+        model: Category,
         key: "id",
       },
     },
@@ -24,6 +27,7 @@ const ProductCategory = sequelize.define(
   {
     timestamps: false,
     underscored: true,
+    sequelize: sequelize,
   }
 );
 

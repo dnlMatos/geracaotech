@@ -4,7 +4,12 @@ import Category from "../models/Category.js";
 export const getAllCategories = async (req, res) => {
   try {
     const categories = await Category.findAll();
-    res.status(200).json(categories);
+
+    if (categories.length < 1) {
+      res.json({ message: "Sem categorias cadastradas" });
+    } else {
+      res.status(200).json({ categories: categories });
+    }
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar categorias." });
   }
@@ -18,7 +23,7 @@ export const getCategoryById = async (req, res) => {
     if (!category) {
       return res.status(404).json({ message: "Categoria não encontrada." });
     }
-    res.status(200).json(category);
+    res.status(200).json({ category: category });
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar categoria." });
   }
