@@ -1,187 +1,90 @@
-import User from "../models/User.js";
-import { Authenticator } from "../services/Authenticator.js";
-import { HashManager } from "../services/HashManager.js";
+const { User } = require("../models");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-// Listar todos os usuários
-export const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.findAll();
-
-    if (users.length === 0) {
-      return res.status(404).json({ message: "Nenhum usuário encontrado." });
+module.exports = {
+  async getById(req, res) {
+    try {
+      const user = await User.findByPk(req.params.id, {
+        attributes: ["id", "firstname", "surname", "email"],
+      });
+      if (!user)
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json({ error: "Erro ao buscar usuário" });
     }
+  },
 
-    // Remove o campo password de cada usuário
-    const usersResponse = users.map((user) => {
-      const userObj = user.get();
-      delete userObj.password;
-      return userObj;
-    });
-
-    res.status(200).json({ users: usersResponse });
-  } catch (error) {
-    res.status(500).json({ message: "Erro ao buscar usuários." });
-  }
-};
-
-// Buscar usuário por ID
-export const getUserById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findByPk(id);
-    if (!user) {
-      return res.status(404).json({ message: "Usuário não encontrado." });
+  async create(req, res) {
+    const { firstname, surname, email, password, confirmPassword } = req.body;
+    if (
+      !firstname ||
+      !surname ||
+      !email ||
+      !password ||
+      password !== confirmPassword
+    ) {
+      return res.status(400).json({ error: "Dados inválidos" });
     }
-    // Remove o campo password do usuário
-    const userResponse = user.get();
-    delete userResponse.password;
-
-    res.status(200).json(userResponse);
-  } catch (error) {
-    res.status(500).json({ message: "Erro ao buscar usuário." });
-  }
-};
-
-// Criar novo usuário
-export const createUser = async (req, res) => {
-  try {
-    const { firstname, surname, email, password } = req.body;
-
-    if (!firstname || !surname || !email || !password) {
-      return res.status(400).json("Todos os campos são obrigatórios");
+    try {
+      const exists = await User.findOne({ where: { email } });
+      if (exists) return res.status(400).json({ error: "Email já cadastrado" });
+      const user = await User.create({ firstname, surname, email, password });
+      res.status(201).json({ id: user.id, firstname, surname, email });
+    } catch (err) {
+      res.status(400).json({ error: "Erro ao cadastrar usuário" });
     }
+  },
 
-    if (password.length < 6) {
-      return res.status(400).json("A senha deve ter pelo menos 6 caracteres");
+  async update(req, res) {
+    const { firstname, surname, email } = req.body;
+    if (!firstname || !surname || !email) {
+      return res.status(400).json({ error: "Dados inválidos" });
     }
-
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      return res.status(400).json("Usuário já cadastrado");
+    try {
+      const [updated] = await User.update(
+        { firstname, surname, email },
+        { where: { id: req.params.id } }
+      );
+      if (!updated)
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      res.status(204).send();
+    } catch (err) {
+      res.status(500).json({ error: "Erro ao atualizar usuário" });
     }
+  },
 
-    // Criptografa a senha usando HashManager
-    const hashManager = new HashManager();
-    const hashPassword = await hashManager.hash(password);
+  async delete(req, res) {
+    try {
+      const deleted = await User.destroy({ where: { id: req.params.id } });
+      if (!deleted)
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      res.status(204).send();
+    } catch (err) {
+      res.status(500).json({ error: "Erro ao deletar usuário" });
+    }
+  },
 
-    const newUser = await User.create({
-      firstname,
-      surname,
-      email,
-      password: hashPassword,
-    });
-
-    // Remove o campo password do objeto retornado
-    const userResponse = { ...newUser.get(), password: undefined };
-
-    // Gera o token de autenticação
-    const authenticator = new Authenticator();
-    const token = authenticator.generateToken({ id: newUser.id });
-
-    // Retorna o usuário e o token de autenticação
-    return res.status(201).json({
-      user: userResponse,
-      token,
-      message: "Usuário criado com sucesso.",
-    });
-  } catch (error) {
-    return res.status(500).json({ message: "Erro ao criar usuário." });
-  }
-};
-
-// Login de usuário
-export const loginUser = async (req, res) => {
-  try {
+  async token(req, res) {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json("Todos os campos são obrigatórios");
+    if (!email || !password)
+      return res.status(400).json({ error: "Dados inválidos" });
+    try {
+      const user = await User.scope(null).findOne({ where: { email } });
+      if (!user)
+        return res.status(400).json({ error: "Usuário ou senha inválidos" });
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid)
+        return res.status(400).json({ error: "Usuário ou senha inválidos" });
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+      res.status(200).json({ token });
+    } catch (err) {
+      res.status(500).json({ error: "Erro ao gerar token" });
     }
-
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res.status(404).json({ message: "Usuário não encontrado." });
-    }
-
-    const hashManager = new HashManager();
-    const isPasswordCorrect = await hashManager.compare(
-      password,
-      user.password
-    );
-
-    if (!isPasswordCorrect) {
-      return res.status(401).json({ message: "Senha inválida." });
-    }
-
-    const authenticator = new Authenticator();
-    const token = authenticator.generateToken({ id: user.id });
-
-    return res.status(200).json({ token });
-  } catch (error) {
-    return res.status(401).json({ message: "Erro ao fazer login." });
-  }
-};
-
-// Atualizar usuário
-export const updateUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    let { firstname, surname, email, password } = req.body;
-    const user = await User.findByPk(id);
-
-    if (!user)
-      return res.status(404).json({ message: "Usuário não encontrado." });
-
-    // Verifica se o email já está em uso por outro usuário
-    if (email && email !== user.email) {
-      const existingUser = await User.findOne({ where: { email } });
-      if (existingUser && existingUser.id !== user.id) {
-        return res.status(400).json({ message: "Email já cadastrado" });
-      }
-    }
-
-    // Monta objeto de atualização
-    const updateData = {
-      firstname:
-        firstname !== undefined && firstname !== ""
-          ? firstname
-          : user.firstname,
-      surname: surname !== undefined && surname !== "" ? surname : user.surname,
-      email: email !== undefined && email !== "" ? email : user.email,
-    };
-
-    if (password && password.trim() !== "") {
-      if (password.length < 6) {
-        return res.status(400).json({
-          message: "A senha deve ter pelo menos 6 caracteres",
-        });
-      }
-      const hashManager = new HashManager();
-      updateData.password = await hashManager.hash(password);
-    }
-
-    await user.update(updateData);
-    return res.status(200).json({
-      ...user.get(),
-      password: undefined,
-      message: "Usuário atualizado com sucesso.",
-    });
-  } catch (error) {
-    return res.status(500).json({ message: "Erro ao atualizar usuário." });
-  }
-};
-
-// Deletar usuário
-export const deleteUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findByPk(id);
-    if (!user) {
-      return res.status(404).json({ message: "Usuário não encontrado." });
-    }
-    await user.destroy();
-    return res.status(202).send({ message: "Usuário deletado com sucesso." });
-  } catch (error) {
-    res.status(500).json({ message: "Erro ao deletar usuário." });
-  }
+  },
 };

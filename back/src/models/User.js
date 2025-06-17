@@ -1,13 +1,12 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../connection/connection.js";
+const { DataTypes } = require('sequelize');
+const bcrypt = require('bcrypt');
 
-const User = sequelize.define(
-  "User",
-  {
+module.exports = (sequelize) => {
+  const User = sequelize.define('User', {
     id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
       autoIncrement: true,
+      primaryKey: true,
     },
     firstname: {
       type: DataTypes.STRING,
@@ -26,11 +25,25 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-  },
-  {
+  }, {
     timestamps: true,
     underscored: true,
-  }
-);
-
-export default User;
+    tableName: 'users',
+    hooks: {
+      beforeCreate: async (user) => {
+        if (user.password) {
+          user.password = await bcrypt.hash(user.password, 10);
+        }
+      },
+      beforeUpdate: async (user) => {
+        if (user.changed('password')) {
+          user.password = await bcrypt.hash(user.password, 10);
+        }
+      },
+    },
+    defaultScope: {
+      attributes: { exclude: ['password'] },
+    },
+  });
+  return User;
+};
