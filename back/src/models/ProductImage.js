@@ -1,38 +1,37 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../connection/connection.js";
+const { DataTypes } = require("sequelize");
 
-const ProductImage = sequelize.define(
-  "product_images",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    product_id: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "products",
-        key: "id",
+module.exports = (sequelize) => {
+  const ProductImage = sequelize.define(
+    "ProductImage",
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      product_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "products",
+          key: "id",
+        },
+      },
+      enabled: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+      },
+      path: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
     },
-    enabled: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    path: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    content: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-  },
-  {
-    timestamps: false,
-    underscored: true,
-  }
-);
-
-export default ProductImage;
+    {
+      timestamps: false,
+      underscored: true,
+      tableName: "product_images",
+    }
+  );
+  return ProductImage;
+};
