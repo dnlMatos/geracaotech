@@ -1,9 +1,10 @@
 const { DataTypes } = require("sequelize");
+const database = require("../config/database");
+const ProductModel = require("./product");
 
-module.exports = (sequelize) => {
-  const ProductImage = sequelize.define(
-    "ProductImage",
-    {
+class ProductImageModel {
+  constructor() {
+    this.model = database.define("ProductImage", {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -13,7 +14,7 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "products",
+          model: ProductModel,
           key: "id",
         },
       },
@@ -22,16 +23,16 @@ module.exports = (sequelize) => {
         allowNull: true,
         defaultValue: false,
       },
-      path: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-    },
-    {
-      timestamps: false,
-      underscored: true,
-      tableName: "product_images",
-    }
-  );
-  return ProductImage;
-};
+    });
+
+    this.model.belongsToMany(ProductModel, {
+      foreignKey: "product_id",
+    });
+
+    ProductModel.hasMany(this.model, {
+      foreignKey: "product_id",
+    });
+  }
+}
+
+module.exports = new ProductImageModel().model;

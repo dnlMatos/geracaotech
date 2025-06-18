@@ -5,9 +5,9 @@ const userRoutes = require("./routes/user.route.js");
 const categoryRoutes = require("./routes/category.route");
 const productRoutes = require("./routes/product.route");
 
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json());
 
-app.use("/users/user", userRoutes);
+// app.use("/users/user", userRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/products", productRoutes);
 

@@ -1,33 +1,55 @@
 const { DataTypes } = require("sequelize");
+const database = require("../config/database");
+const ProductModel = require("./product");
+const CategoryModel = require("./category");
 
-module.exports = (sequelize) => {
-  const ProductCategory = sequelize.define(
-    "ProductCategory",
-    {
-      product_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "products",
-          key: "id",
+class ProductCategoryModel {
+  constructor() {
+    this.model = database.define(
+      "ProductCategory",
+      {
+        product_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: {
+            model: ProductModel,
+            key: "id",
+          },
+          primaryKey: true,
         },
-        primaryKey: true,
-      },
-      category_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "categories",
-          key: "id",
+        category_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: {
+            model: CategoryModel,
+            key: "id",
+          },
+          primaryKey: true,
         },
-        primaryKey: true,
       },
-    },
-    {
-      timestamps: false,
-      underscored: true,
-      tableName: "product_categories",
-    }
-  );
-  return ProductCategory;
-};
+      {
+        timestamps: false,
+        underscored: true,
+        tableName: "product_categories",
+      }
+    );
+
+    this.model.belongsTo(ProductModel, {
+      foreignKey: "product_id",
+    });
+
+    ProductModel.hasMany(this.model, {
+      foreignKey: "product_id",
+    });
+
+    this.model.belongsTo(CategoryModel, {
+      foreignKey: "category_id",
+    });
+
+    CategoryModel.hasMany(this.model, {
+      foreignKey: "category_id",
+    });
+  }
+}
+
+module.exports = new ProductCategoryModel().model;
