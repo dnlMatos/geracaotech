@@ -4,10 +4,30 @@ const ProductModel = require("../models/product");
 class ProductDatabase {
   async FindAll() {
     return await ProductModel.findAll({
-      // include: {
-      //   model: CategoryModel,
-      //   as: "categories",
-      // },
+      include: [
+        {
+          model: CategoryModel,
+          as: "product_categories",
+          through: {
+            attributes: [], // não traz os dados da tabela pivô, só faz o join
+          },
+        },
+      ],
+    });
+  }
+
+  async FindById(id) {
+    return await ProductModel.findOne({
+      where: { id },
+      include: [
+        {
+          model: CategoryModel,
+          as: "product_categories",
+          through: {
+            attributes: [], // não traz os dados da tabela pivô, só faz o join
+          },
+        },
+      ],
     });
   }
 

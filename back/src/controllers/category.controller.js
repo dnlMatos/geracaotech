@@ -1,8 +1,8 @@
 const categoryDB = require("../services/categoryDB");
 class CategoryController {
-  async listAll(req, res) {
+  async listAll(ids, _, res) {
     try {
-      const categories = await categoryDB.FindAll();
+      const categories = await categoryDB.FindAll(ids);
       res.status(200).json(categories);
     } catch (error) {
       res.status(500).json({ error: error || "Erro ao buscar categorias" });
@@ -10,8 +10,6 @@ class CategoryController {
   }
 
   async getById(req, res) {
-    console.log(`Buscando categoria com ID: ${req.params.id}`);
-
     try {
       const category = await categoryDB.FindById(req.params.id);
       if (!category) {

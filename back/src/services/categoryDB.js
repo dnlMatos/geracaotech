@@ -1,8 +1,16 @@
 const categoryModel = require("../models/category");
 
 class CategoryDatabase {
-  async FindAll() {
-    return await categoryModel.findAll();
+  async FindAll(ids) {
+    if (ids && ids.length > 0) {
+      return await categoryModel.findAll({
+        where: {
+          id: ids,
+        },
+      });
+    } else {
+      return await categoryModel.findAll();
+    }
   }
 
   async FindById(id) {
