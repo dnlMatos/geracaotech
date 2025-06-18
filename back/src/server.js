@@ -8,9 +8,9 @@ const SYNC_FORCE = process.env.SYNC_FORCE === "true";
 (async () => {
   try {
     // await sequelize.sync({ force: SYNC_FORCE });
-    if (SYNC_FORCE) {
-      console.log("Tabelas recriadas com force: true");
-    }
+    // if (SYNC_FORCE) {
+    //   console.log("Tabelas recriadas com force: true");
+    // }
     app.listen(PORT, () => {
       console.log(`Servidor rodando na porta ${PORT}`);
     });
