@@ -1,3 +1,4 @@
+const { ProductOption } = require("../models");
 const CategoryModel = require("../models/category");
 const ProductModel = require("../models/product");
 
@@ -11,6 +12,10 @@ class ProductDatabase {
           through: {
             attributes: [], // não traz os dados da tabela pivô, só faz o join
           },
+        },
+        {
+          model: ProductOption,
+          as: "product_options",
         },
       ],
     });
@@ -26,6 +31,10 @@ class ProductDatabase {
           through: {
             attributes: [], // não traz os dados da tabela pivô, só faz o join
           },
+        },
+        {
+          model: ProductOption,
+          as: "product_options",
         },
       ],
     });

@@ -1,20 +1,19 @@
 const categoryModel = require("../models/category");
 
 class CategoryDatabase {
-  async FindAll(ids) {
-    if (ids && ids.length > 0) {
+  async FindAll() {
+    return await categoryModel.findAll();
+  }
+
+  async FindById(ids) {
+    if (Array.isArray(ids) && ids.length > 0) {
       return await categoryModel.findAll({
         where: {
           id: ids,
         },
       });
-    } else {
-      return await categoryModel.findAll();
     }
-  }
-
-  async FindById(id) {
-    return await categoryModel.findOne({ where: { id } });
+    return await categoryModel.findOne({ where: { id: ids } });
   }
 
   async Create(data) {

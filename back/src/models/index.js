@@ -3,6 +3,8 @@ const ProductModel = require("./product");
 const User = require("./user");
 const CategoryModel = require("./category");
 const ProductCategoryModel = require("./productCategory");
+const ProductImage = require("./ProductImage");
+const ProductOption = require("./ProductOption");
 
 // Associations
 //MODELO 1 Super N:M
@@ -20,27 +22,31 @@ CategoryModel.belongsToMany(ProductModel, {
   as: "product_categories",
 });
 
-//MODELO 2 Super Many-to-Many
-// ProductModel.hasMany(ProductCategoryModel, {
-//   foreignKey: "product_id",
-//   as: "product_categories",
-// });
-// CategoryModel.hasMany(ProductCategoryModel, {
-//   foreignKey: "category_id",
-//   as: "product_categories",
-// });
-// ProductCategoryModel.belongsToMany(ProductModel, {
-//   foreignKey: "product_id",
-//   as: "product",
-// });
-// ProductCategoryModel.belongsTo(CategoryModel, {
-//   foreignKey: "category_id",
-//   as: "category",
-// });
+ProductModel.hasMany(ProductImage, {
+  foreignKey: "product_id",
+  as: "product_images",
+});
+
+ProductImage.belongsTo(ProductModel, {
+  foreignKey: "product_id",
+  as: "product_images",
+});
+
+ProductModel.hasMany(ProductOption, {
+  foreignKey: "product_id",
+  as: "product_options",
+});
+
+ProductOption.belongsTo(ProductModel, {
+  foreignKey: "product_id",
+  as: "product_options",
+});
 
 module.exports = {
   sequelize,
   CategoryModel,
   ProductModel,
   ProductCategoryModel,
+  ProductImage,
+  ProductOption,
 };

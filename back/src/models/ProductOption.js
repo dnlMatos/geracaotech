@@ -39,7 +39,7 @@ class ProductOptionModel {
           allowNull: true,
           defaultValue: "text",
         },
-        values: {
+        option_values: {
           type: DataTypes.STRING,
           allowNull: false,
         },
@@ -50,14 +50,6 @@ class ProductOptionModel {
         tableName: "product_options",
       }
     );
-
-    this.model.belongsTo(ProductModel, {
-      foreignKey: "product_id",
-    });
-
-    ProductModel.hasMany(this.model, {
-      foreignKey: "product_id",
-    });
   }
 }
 
