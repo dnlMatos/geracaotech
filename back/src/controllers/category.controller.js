@@ -10,8 +10,6 @@ class CategoryController {
   }
 
   async getById(req, res) {
-    console.log(`Buscando categoria com ID: ${req.params.id}`);
-
     try {
       const category = await categoryDB.FindById(req.params.id);
       if (!category) {

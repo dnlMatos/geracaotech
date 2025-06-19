@@ -3,39 +3,43 @@ const ProductModel = require("./product");
 const User = require("./user");
 const CategoryModel = require("./category");
 const ProductCategoryModel = require("./productCategory");
+const ProductImage = require("./ProductImage");
+const ProductOption = require("./ProductOption");
 
 // Associations
 //MODELO 1 Super N:M
-// ProductModel.belongsToMany(CategoryModel, {
-//   through: { model: ProductCategoryModel },
-//   foreignKey: "product_id",
-//   otherKey: "category_id",
-//   as: "product_categories",
-// });
-
-// CategoryModel.belongsToMany(ProductModel, {
-//   through: { model: ProductCategoryModel },
-//   foreignKey: "category_id",
-//   otherKey: "product_id",
-//   as: "product_categories",
-// });
-
-//MODELO 2 Super Many-to-Many
-ProductModel.hasMany(ProductCategoryModel, {
+ProductModel.belongsToMany(CategoryModel, {
+  through: { model: ProductCategoryModel },
   foreignKey: "product_id",
+  otherKey: "category_id",
   as: "product_categories",
 });
-CategoryModel.hasMany(ProductCategoryModel, {
+
+CategoryModel.belongsToMany(ProductModel, {
+  through: { model: ProductCategoryModel },
   foreignKey: "category_id",
+  otherKey: "product_id",
   as: "product_categories",
 });
-ProductCategoryModel.belongsTo(ProductModel, {
+
+ProductModel.hasMany(ProductImage, {
   foreignKey: "product_id",
-  as: "product",
+  as: "product_images",
 });
-ProductCategoryModel.belongsTo(CategoryModel, {
-  foreignKey: "category_id",
-  as: "category",
+
+ProductImage.belongsTo(ProductModel, {
+  foreignKey: "product_id",
+  as: "product_images",
+});
+
+ProductModel.hasMany(ProductOption, {
+  foreignKey: "product_id",
+  as: "product_options",
+});
+
+ProductOption.belongsTo(ProductModel, {
+  foreignKey: "product_id",
+  as: "product_options",
 });
 
 module.exports = {
@@ -43,4 +47,6 @@ module.exports = {
   CategoryModel,
   ProductModel,
   ProductCategoryModel,
+  ProductImage,
+  ProductOption,
 };

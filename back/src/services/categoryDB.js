@@ -5,8 +5,15 @@ class CategoryDatabase {
     return await categoryModel.findAll();
   }
 
-  async FindById(id) {
-    return await categoryModel.findOne({ where: { id } });
+  async FindById(ids) {
+    if (Array.isArray(ids) && ids.length > 0) {
+      return await categoryModel.findAll({
+        where: {
+          id: ids,
+        },
+      });
+    }
+    return await categoryModel.findOne({ where: { id: ids } });
   }
 
   async Create(data) {

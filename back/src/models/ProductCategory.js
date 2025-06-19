@@ -33,22 +33,6 @@ class ProductCategoryModel {
         tableName: "product_categories",
       }
     );
-
-    // this.model.belongsTo(ProductModel, {
-    //   foreignKey: "product_id",
-    // });
-
-    // ProductModel.hasMany(this.model, {
-    //   foreignKey: "product_id",
-    // });
-
-    // this.model.belongsTo(CategoryModel, {
-    //   foreignKey: "category_id",
-    // });
-
-    // CategoryModel.hasMany(this.model, {
-    //   foreignKey: "category_id",
-    // });
   }
 }
 
