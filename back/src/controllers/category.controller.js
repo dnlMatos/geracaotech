@@ -1,4 +1,5 @@
 const categoryDB = require("../services/categoryDB");
+
 class CategoryController {
   async listAll(req, res) {
     try {
