@@ -7,7 +7,7 @@ const productRoutes = require("./routes/product.route");
 
 app.use(express.json());
 
-// app.use("/users/user", userRoutes);
+app.use("/users", userRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/products", productRoutes);
 
