@@ -13,6 +13,7 @@ class Authenticator {
   };
 
   getTokenData = (token) => {
+    console.log("Verifying token:", token);
     try {
       const payload = jwt.verify(token, process.env.JWT_KEY);
 
