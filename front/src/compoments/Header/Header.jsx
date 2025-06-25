@@ -33,7 +33,7 @@ const Header = () => {
 
   return (
     <header className="w-full bg-white">
-      <div className=" flex items-center p-5 gap-5 container mx-auto justify-between">
+      <div className=" flex items-center py-5 gap-5 container mx-auto justify-between">
         {/*Interactive mobile button */}
         <div className="md:hidden ">
           <button onClick={() => setIsMobile(!isMobile)}>
@@ -74,21 +74,21 @@ const Header = () => {
         <a href="" className="underline min-w-24 hidden md:block">
           Cadastre-se
         </a>
-        <button className="hidden md:block cursor-pointer bg-[var(--color-primary)] text-white rounded p-2 font-semibold hover:bg-pink-700 transition button">
+        <button className="hidden md:block cursor-pointer bg-[var(--color-primary)] text-white rounded px-5 py-2 font-semibold hover:bg-pink-700 transition button">
           Entrar
         </button>
         <ShoppingCart
           style={{
             color: "var(--color-primary)",
           }}
-          className="cursor-pointer"
+          className="cursor-pointer block"
           size={24}
         />
       </div>
 
       {/*Second input search */}
       {showInput && (
-        <div className="container w-full px-5 mx-auto relative  bg-white">
+        <div className="container w-full py-2 mx-auto relative  bg-white">
           <input
             type="text"
             className="rounded h-10 px-2 w-full mb-6"
@@ -99,7 +99,7 @@ const Header = () => {
             onChange={handleOnChangeTwo}
           />
           <Search
-            className="cursor-pointer absolute right-10 top-2"
+            className="cursor-pointer absolute right-3 top-4"
             style={{ color: "var(--color-dark-gray-3)" }}
             onClick={handleOnChangeTwo}
           />
@@ -107,30 +107,57 @@ const Header = () => {
       )}
 
       {/*Desktop menu */}
-      <nav className="hidden md:flex container mx-auto px-5">
+      <nav className="hidden md:flex pb-[15px] container mx-auto">
         <ul className="flex gap-3">
-          <li>Home</li>
-          <li>Produtos</li>
-          <li>Categorias</li>
-          <li>Meus Pedidos</li>
+          <ul className="flex gap-3 ">
+            <li>
+              <a
+                href="/home"
+                className={`w-full block rounded${
+                  currentPath === "/home" ? " active" : ""
+                }`}
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a
+                href="/products"
+                className={`w-full block rounded${
+                  currentPath === "/products" ? " active" : ""
+                }`}
+              >
+                Produtos
+              </a>
+            </li>
+            <li>
+              <a
+                href="/categories"
+                className={`w-full block rounded${
+                  currentPath === "/categories" ? " active" : ""
+                }`}
+              >
+                Categorias
+              </a>
+            </li>
+            <li>
+              <a
+                href="/delivery"
+                className={`w-full block rounded${
+                  currentPath === "/delivery" ? " active" : ""
+                }`}
+              >
+                Meus Pedidos
+              </a>
+            </li>
+          </ul>
         </ul>
       </nav>
-
-      {/*Interactive mobile button */}
-      {/* <div className="md:hidden container mx-auto px-5">
-        <button onClick={() => setIsMobile(!isMobile)}>
-          {isMobile ? (
-            <X size={24} className="cursor-pointer" />
-          ) : (
-            <Menu size={24} className="cursor-pointer" />
-          )}
-        </button>
-      </div> */}
 
       {/*Mobile menu*/}
       {isMobile && (
         <div className="md:hidden container px-8 bg-white max-w-1/2 absolute">
-          <nav className="flex gap-3 flex-col">
+          <nav className="flex gap-3 flex-col mb-5">
             <p className="font-bold">Páginas</p>
             <ul className="flex gap-3 flex-col">
               <li>
