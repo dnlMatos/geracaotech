@@ -1,26 +1,34 @@
 import React, { useState } from "react";
+import "./index.css";
 import Logo from "../../assets/Logo.png";
 import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 import { Menu } from "lucide-react";
 import { X } from "lucide-react";
+import Divider from "../Divider/Divider";
 
 const Header = () => {
   const [isMobile, setIsMobile] = useState();
   const [showInput, setShowInput] = useState(false);
-  const [data, setData] = useState("");
+  const [inputOne, setInputOne] = useState("");
+  const [inputTwo, setInputTwo] = useState("");
+
+  const currentPath = window.location.pathname;
 
   const fadeInput = () => {
     if (window.innerWidth <= 768) {
       setShowInput(!showInput);
     } else {
-      handleOnChange({ target: { value: data } });
+      handleOnChangeOne({ target: { value: inputOne } });
     }
   };
 
-  const handleOnChange = (e) => {
-    setData(e.target.value);
-    console.log(e.target.value);
+  const handleOnChangeOne = (e) => {
+    setInputOne(e.target.value);
+  };
+
+  const handleOnChangeTwo = (e) => {
+    setInputTwo(e.target.value);
   };
 
   return (
@@ -44,15 +52,24 @@ const Header = () => {
             className="rounded h-10 px-2 hidden md:block lg:w-xs xl:w-xl"
             style={{ backgroundColor: "var(--color-light-gray-3)" }}
             placeholder="Pesquisar produto..."
-            value={data}
-            name="search"
-            onChange={handleOnChange}
+            value={inputOne}
+            name="inputOne"
+            onChange={handleOnChangeOne}
           />
-          <Search
-            className="md:absolute md:right-2 lg:right-4 cursor-pointer"
-            style={{ color: "var(--color-dark-gray-3)" }}
-            onClick={fadeInput}
-          />
+          {showInput ? (
+            <X
+              size={24}
+              className="cursor-pointer"
+              onClick={fadeInput}
+              style={{ color: "var(--color-primary)" }}
+            />
+          ) : (
+            <Search
+              className="md:absolute md:right-2 lg:right-4 cursor-pointer"
+              style={{ color: "var(--color-primary)" }}
+              onClick={fadeInput}
+            />
+          )}
         </div>
         <a href="" className="underline min-w-24 hidden md:block">
           Cadastre-se
@@ -77,14 +94,14 @@ const Header = () => {
             className="rounded h-10 px-2 w-full mb-6"
             style={{ backgroundColor: "var(--color-light-gray-3)" }}
             placeholder="Pesquisar produto..."
-            value={data}
-            name="search"
-            onChange={handleOnChange}
+            value={inputTwo || ""}
+            name="inputTwo"
+            onChange={handleOnChangeTwo}
           />
           <Search
             className="cursor-pointer absolute right-10 top-2"
             style={{ color: "var(--color-dark-gray-3)" }}
-            onClick={handleOnChange}
+            onClick={handleOnChangeTwo}
           />
         </div>
       )}
@@ -112,15 +129,60 @@ const Header = () => {
 
       {/*Mobile menu*/}
       {isMobile && (
-        <div className="md:hidden container px-10 bg-white max-w-1/2 absolute">
+        <div className="md:hidden container px-8 bg-white max-w-1/2 absolute">
           <nav className="flex gap-3 flex-col">
             <p className="font-bold">Páginas</p>
             <ul className="flex gap-3 flex-col">
-              <li>Home</li>
-              <li>Produtos</li>
-              <li>Categorias</li>
-              <li>Meus Pedidos</li>
+              <li>
+                <a
+                  href="/home"
+                  className={`w-full block rounded${
+                    currentPath === "/home" ? " active" : ""
+                  }`}
+                >
+                  Home
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/products"
+                  className={`w-full block rounded${
+                    currentPath === "/products" ? " active" : ""
+                  }`}
+                >
+                  Produtos
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/categories"
+                  className={`w-full block rounded${
+                    currentPath === "/categories" ? " active" : ""
+                  }`}
+                >
+                  Categorias
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/delivery"
+                  className={`w-full block rounded${
+                    currentPath === "/delivery" ? " active" : ""
+                  }`}
+                >
+                  Meus Pedidos
+                </a>
+              </li>
             </ul>
+            <Divider />
+            <div className="flex justify-between items-center">
+              <button className="cursor-pointer bg-[var(--color-primary)] text-white rounded px-5 py-2 font-semibold hover:bg-pink-700 transition button">
+                Entrar
+              </button>
+              <a href="" className="underline min-w-24 ">
+                Cadastre-se
+              </a>
+            </div>
           </nav>
           {/* <button onClick={() => setIsMobile(false)}>
             <Menu size={24} />
