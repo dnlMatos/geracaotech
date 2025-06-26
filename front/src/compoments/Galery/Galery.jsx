@@ -59,12 +59,19 @@ const Galery = () => {
       className="w-full py-15"
       style={{ background: "var(--color-light-gray-3)" }}
     >
-      <div className="slider-container mx-auto container relative">
+      <div className="slider-container mx-auto container md:relative flex flex-col justify-center">
+        <Slider {...settings}>
+          {images.map((img, index) => (
+            <div key={index} className="w-full 2xl:h-162">
+              <img src={img} alt={`Slide ${index + 1}`} className="w-full" />
+            </div>
+          ))}
+        </Slider>
         <aside
-          className="absolute w-md p-5 flex justify-center flex-col gap-2 md:gap-8 h-full"
+          className="mt-20 flex items-center flex-col gap-5 md:absolute md:mt-0 md:px-10 md:items-start"
           style={{ zIndex: "9" }}
         >
-          <p className="font-bold" style={{ color: "var(--color-warning)" }}>
+          <p className="text-lg font-bold text-[var(--color-primary)] sm:text-[var(--color-warning)]">
             Melhores ofertas personalizadas
           </p>
           <div className="flex gap-2 items-center">
@@ -79,17 +86,13 @@ const Galery = () => {
           <p style={{ color: "black" }}>
             Lorem, ipsum dolor sit amet consectetur adipisicing elit.
           </p>
-          <button className="w-46 cursor-pointer bg-[var(--color-primary)] text-white rounded px-5 py-2 font-semibold hover:bg-pink-700 transition">
+          <button
+            className="w-46 cursor-pointer bg-[var(--color-primary)] text-white rounded px-5 py-2 
+          font-semibold hover:bg-pink-700 transition"
+          >
             Ver Ofertas
           </button>
         </aside>
-        <Slider {...settings}>
-          {images.map((img, index) => (
-            <div key={index} className="w-full 2xl:h-162">
-              <img src={img} alt={`Slide ${index + 1}`} className="w-full" />
-            </div>
-          ))}
-        </Slider>
       </div>
     </div>
   );
