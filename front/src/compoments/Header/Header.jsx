@@ -33,7 +33,7 @@ const Header = () => {
 
   return (
     <header className="w-full bg-white">
-      <div className=" flex items-center py-5 gap-5 container mx-auto justify-between">
+      <div className=" flex items-center py-5 px-5 md:px-0 gap-5 container mx-auto justify-between">
         {/*Interactive mobile button */}
         <div className="md:hidden ">
           <button onClick={() => setIsMobile(!isMobile)}>

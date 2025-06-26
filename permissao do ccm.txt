@@ -1,4 +1,0 @@
-
-1. Copie e cole os arquivos .cody.json e generate-commit-message.sh para a pasta raiz do novo projeto.
-2. No terminal, execute o seguinte comando: chmod +x generate-commit-message.sh. Ele concederá permissão de execução ao arquivo generate-commit-message.sh.
-3. Execute o arquivo generate-commit-message.sh com o seguinte comando: ./generate-commit-message.sh
