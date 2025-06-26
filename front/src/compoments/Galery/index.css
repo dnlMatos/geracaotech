@@ -1,0 +1,19 @@
+/* Estilo para os thumbnails */
+.slick-dots.slick-thumb li {
+  border: 2px solid transparent; /* borda base */
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border 0.3s ease;
+  top: 15px;
+}
+
+/* Estilo para a miniatura ativa */
+.slick-dots.slick-thumb li.slick-active {
+  border: 3px solid var(--color-primary); /* cor e espessura da borda ativa */
+}
+
+.imgFlame {
+  width: 40px;
+  height: 60px;
+  margin-left: 10px;
+}

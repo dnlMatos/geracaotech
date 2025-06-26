@@ -16,10 +16,10 @@
   --color-light-gray-2: #cccccc;
   --color-light-gray-3: #f5f5f5;
   --color-white: #ffffff;
+  --color-ligth-blue: ##faf9ff;
 }
 
 body {
-  background-color: var(--color-light-gray-3);
   color: var(--color-dark-gray-3);
   letter-spacing: 0.05em;
 }

@@ -156,7 +156,10 @@ const Header = () => {
 
       {/*Mobile menu*/}
       {isMobile && (
-        <div className="md:hidden container px-8 bg-white max-w-1/2 absolute">
+        <div
+          className="md:hidden container px-8 bg-white max-w-1/2 absolute"
+          style={{ zIndex: "999" }}
+        >
           <nav className="flex gap-3 flex-col mb-5">
             <p className="font-bold">Páginas</p>
             <ul className="flex gap-3 flex-col">
