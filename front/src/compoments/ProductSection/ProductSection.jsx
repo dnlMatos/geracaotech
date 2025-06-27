@@ -2,8 +2,23 @@ import React from "react";
 import collection1 from "../../assets/images/collection-1.png";
 import collection2 from "../../assets/images/collection-2.png";
 import collection3 from "../../assets/images/collection-3.png";
+import { Shirt } from "lucide-react";
+import { Footprints } from "lucide-react";
+import { Headphones } from "lucide-react";
+import "./index.css"
 
 const images = [collection1, collection2, collection3];
+const parts = [
+  {
+    part: "Camisetas",
+    icon: Shirt,
+  },
+  { part: "Calçados", icon: Footprints },
+  { part: "Bonés", icon: Headphones },
+  { part: "Calças", icon: Headphones },
+  { part: "Bonés", icon: Headphones },
+  { part: "Eletrônicos", icon: Headphones },
+];
 
 const ProductSection = () => {
   return (
@@ -40,6 +55,26 @@ const ProductSection = () => {
                   >
                     Comprar
                   </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="container mx-auto">
+        <p className="container mx-auto font-bold mb-5 text-lg w-full text-center">
+          Coleções em destaque
+        </p>
+        <div className="w-full flex flex-row justify-center gap-7 group">
+          {parts.map((part, index) => {
+            return (
+              <div key={index} className="flex flex-col items-center">
+                <div className="flex flex-col items-center ">
+                  <div className="w-24 h-24 rounded-full flex justify-center items-center bg-gray-200 mb-2">
+                    <part.icon size={40} />
+                  </div>
+                  <span>{part.part}</span>
                 </div>
               </div>
             );
